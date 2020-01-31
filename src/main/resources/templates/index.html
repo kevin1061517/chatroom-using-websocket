@@ -1,0 +1,128 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kevin Chat</title>
+    <style type="text/css">
+        input#chat {
+            width: 410px
+        }
+ 
+        #console-container {
+            width: 400px;
+        }
+ 
+        #console {
+            border: 1px solid #CCCCCC;
+            border-right-color: #999999;
+            border-bottom-color: #999999;
+            height: 170px;
+            overflow-y: scroll;
+            padding: 5px;
+            width: 100%;
+        }
+ 
+        #console p {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <script type="application/javascript">
+		alert(window.location.host);
+        var Chat = {};
+ 
+        Chat.socket = null;
+ 
+        Chat.connect = (function(host) {
+            if ('WebSocket' in window) {
+                Chat.socket = new WebSocket(host);
+            } else if ('MozWebSocket' in window) {
+                Chat.socket = new MozWebSocket(host);
+            } else {
+                Console.log('Error: WebSocket is not supported by this browser.');
+                return;
+            }
+
+            Chat.socket.onopen = function () {
+            	console.log("open");
+                Console.log('Info: WebSocket connection opened.');
+                Console.log(window.location.host +" has joined the chatroom now!")
+                document.getElementById('chat').onkeydown = function(event) {
+                    if (event.keyCode == 13) {
+                        Chat.sendMessage();
+                    }
+                };
+            };
+ 
+            Chat.socket.onclose = function () {
+                document.getElementById('chat').onkeydown = null;
+                Console.log('Info: WebSocket closed');
+            };
+ 
+            Chat.socket.onmessage = function (message) {
+                Console.log(window.location.host+" :  "+message.data);
+            };
+        });
+ 
+        Chat.initialize = function() {
+        	//var roomid = document.getElementById('roomid').value;
+        	var roomid = 0;
+        	console.log('ws://' + window.location.host + '/websocket/chat');
+            if (window.location.protocol == 'http:') {
+                Chat.connect('ws://' + window.location.host + '/websocket/'+ roomid);
+            } else {
+                Chat.connect('wss://' + window.location.host + '/websocket/'+ roomid);
+            }
+
+        };
+ 
+        Chat.sendMessage = (function() {
+            var message = document.getElementById('chat').value;
+            /*var roomid = document.getElementById('roomid').value;
+            if (message=='' | roomid==''){
+            	alert('please type the roomid or message');
+            }*/
+            if (message != '') {
+                Chat.socket.send(message);
+                document.getElementById('chat').value = '';
+            }
+        });
+ 
+        var Console = {};
+ 
+        Console.log = (function(message) {
+            var console = document.getElementById('console');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.innerHTML = message;
+            console.appendChild(p);
+            while (console.childNodes.length > 25) {
+                console.removeChild(console.firstChild);
+            }
+            console.scrollTop = console.scrollHeight;
+        });
+ 
+        Chat.initialize();
+ 
+        document.addEventListener("DOMContentLoaded", function() {
+            // Remove elements with "noscript" class - <noscript> is not allowed in XHTML
+            var noscripts = document.getElementsByClassName("noscript");
+            for (var i = 0; i < noscripts.length; i++) {
+                noscripts[i].parentNode.removeChild(noscripts[i]);
+            }
+        }, false);
+    </script>
+</head>
+	<body>
+	<div class="noscript"><h2 style="color: #ff0000">Kevin Chatroom</h2></div>
+	<div>
+	    <p>
+			<font size="3">Room_id: </font><input type="text" value="0" placeholder="roomid" id="roomid" />
+		</p>
+		<p>
+	        <font size="3">Message: </font><input type="text" placeholder="type and press enter to chat" id="chat" />
+	    </p>
+	    <div id="console-container">
+	        <div id="console"></div>
+	    </div>
+	</div>
+	</body>
+</html>
