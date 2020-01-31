@@ -14,7 +14,10 @@ public class ViewController {
 	}
 	@GetMapping(value = "/test")
 	public String html() {
-		return "index.html";
+		return "hello world";
 	}
-	
+	@GetMapping(value = "/")
+	public String index() {
+		return "index";
+	}
 }
