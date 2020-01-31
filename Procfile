@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* Chatroom --port $PORT 
+web: java %JAVA_OPTS% -cp target/classes;target/dependency/* Start 
