@@ -1,18 +1,17 @@
 # ChatRoom_by_Socket
-## Introduction
 I developed a simple web-based chatroom using Spring Boot, which is an open source Java-based framework and finally deplyed it to Heroku, which is a cloud platform as a service (PaaS) supporting several programming languages. The purpose of this programming practice is mainly to not only learn the websocket fundamental but also be regarded as homework assigned by my advisor. Most of all, it's important to familiar with JAVA, Spring Boot, Websocket, JavaScript and so on.
+
+## Introduction
 
 ## Synopsis
 ``` Java
 @OnOpen
     public void start(@PathParam(value = "info") String name, Session session) {
-//    	System.out.println("start");
     	logger.info("start");
         this.session = session;
         this.name = name;
         connections.add(this);
         String message = String.format("%s has joined chatroom now!", name);
-//        String message = String.format("* %s %s", nickname, "has joined.");
         broadcast(message);
     }
  
@@ -25,15 +24,12 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
  
     @OnMessage
     public void incoming(String message) {
-//        String response = String.format("%s: %s", nickname, message);
-        //user input 會先到這
-//        System.out.println("client: "+response);
     	broadcast(message);
     }
  
     @OnError
     public void onError(Throwable t) throws Throwable {
-        System.out.println("Chat Error: " + t.toString());
+        logger.info("Chat Error: " + t.toString());
     }
 ``` 
 
@@ -43,16 +39,15 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
         for (WebSocketServerController  client : connections) {
             try {
                 synchronized (client) {
-                	
                     client.session.getBasicRemote().sendText(msg);
                 }
             } catch (IOException e) {
-            	System.out.println("Chat Error: Failed to send message to client");
+            	logger.warning("Chat Error: Failed to send message to client");
                 connections.remove(client);
                 try {
                     client.session.close();
                 } catch (IOException e1) {
-                    // Ignore
+                    e.printStackTrace();
                 }
                 String message = String.format("Unfortunately! %s has disconnected!", name);
                 broadcast(message);
