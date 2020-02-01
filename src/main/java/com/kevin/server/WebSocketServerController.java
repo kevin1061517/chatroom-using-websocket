@@ -31,7 +31,6 @@ public class WebSocketServerController {
  
     public WebSocketServerController () {
 //        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
-//        System.out.println(nickname);
     }
  
 
