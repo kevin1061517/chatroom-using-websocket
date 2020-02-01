@@ -5,7 +5,7 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
 
 ## Synopsis
 ### Back-end code
-#### * javax.websocket part
+####   javax.websocket part
 ``` Java
 @OnOpen
     public void start(@PathParam(value = "info") String name, Session session) {
@@ -34,7 +34,7 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
         logger.info("Chat Error: " + t.toString());
     }
 ``` 
-#### * broadcast to all online users
+####   broadcast to all online users
 ``` Java
     private void broadcast(String msg) {
     	logger.info(connections.toString());
@@ -57,9 +57,17 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
         }
     }
 ``` 
+
 ## Deploying to Heroku
 
-## Requirements & Dependencies
+## Required language, package and tool
+* Java JDK
+* JAVA Spring Boot
+* javax.websocket package
+* HTML
+* JavaScript
+* Heroku
+* Git
 
 ## Demo Screenshot(gif)
 ![image](https://i.imgur.com/Mk1AXkP.gif)
