@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -war target/Chatroom-0.0.1-SNAPSHOT.war
+web: java -jar target/*.war --spring.profiles.active=heroku --server.port=$PORT
