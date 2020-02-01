@@ -4,6 +4,8 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
 ## Introduction
 
 ## Synopsis
+### Back-end code
+#### javax.websocket part
 ``` Java
 @OnOpen
     public void start(@PathParam(value = "info") String name, Session session) {
@@ -32,7 +34,7 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
         logger.info("Chat Error: " + t.toString());
     }
 ``` 
-
+#### broadcast to all online users
 ``` Java
     private void broadcast(String msg) {
     	logger.info(connections.toString());
