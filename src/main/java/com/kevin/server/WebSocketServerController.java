@@ -10,45 +10,47 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Component;
-
-import com.kevin.config.MySpringConfigurator;
+import java.util.logging.*;
 
 @Component
-@ServerEndpoint(value = "/websocket/{username}", configurator = MySpringConfigurator.class)
+@ServerEndpoint(value = "/websocket/{info}")
 public class WebSocketServerController {
- 
-    private static final String GUEST_PREFIX = "Guest";
+	private Logger logger = Logger.getLogger("Log");
+    private static final String GUEST_PREFIX = "User";
     private static final AtomicInteger connectionIds = new AtomicInteger(0);
     private static final Set<WebSocketServerController> connections =
             new CopyOnWriteArraySet<>();
- 
-    private final String nickname;
+    
+    private String name;
+//    private final String nickname;
     private Session session;
  
     public WebSocketServerController () {
-        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
-        System.out.println(nickname);
+//        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
+//        System.out.println(nickname);
     }
  
 
     @OnOpen
-    public void start(Session session) {
-    	System.out.println("start");
+    public void start(@PathParam(value = "info") String name, Session session) {
+//    	System.out.println("start");
+    	logger.info("start");
         this.session = session;
+        this.name = name;
         connections.add(this);
-//        String message = " has joined the chatroom now!";
+        String message = String.format("%s has joined chatroom now!", name);
 //        String message = String.format("* %s %s", nickname, "has joined.");
-//        broadcast(message);
+        broadcast(message);
     }
  
     @OnClose
     public void end() {
         connections.remove(this);
-        String message = String.format("* %s %s",
-                nickname, "has disconnected.");
+        String message = String.format("Unfortunately! %s has disconnected!", name);
         broadcast(message);
     }
  
@@ -66,8 +68,7 @@ public class WebSocketServerController {
     }
  
     private void broadcast(String msg) {
-    	System.out.println("broadcast");
-    	System.out.println(connections);
+    	logger.info(connections.toString());
         for (WebSocketServerController  client : connections) {
             try {
                 synchronized (client) {
@@ -82,8 +83,7 @@ public class WebSocketServerController {
                 } catch (IOException e1) {
                     // Ignore
                 }
-                String message = String.format("* %s %s",
-                        client.nickname, "has been disconnected.");
+                String message = String.format("Unfortunately! %s has disconnected!", name);
                 broadcast(message);
             }
         }

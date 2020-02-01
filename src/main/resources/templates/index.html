@@ -27,10 +27,22 @@
     </style>
     <script type="application/javascript">
 		alert(window.location.host);
+        
+		var name
+        function Ensure(){
+        	name = document.getElementById('name').value;
+        	if (name == ''){
+        		console.log('empty');
+        		alert('please enter your name');
+        	}
+        	else{
+        		Chat.initialize();
+        	}
+        }//end
+        
         var Chat = {};
- 
+   	 
         Chat.socket = null;
- 
         Chat.connect = (function(host) {
             if ('WebSocket' in window) {
                 Chat.socket = new WebSocket(host);
@@ -42,9 +54,7 @@
             }
 
             Chat.socket.onopen = function () {
-            	console.log("open");
-                Console.log('Info: WebSocket connection opened.');
-                Console.log(window.location.host +" has joined the chatroom now!")
+                Console.log("Hint: You are joining the chatroom now!")
                 document.getElementById('chat').onkeydown = function(event) {
                     if (event.keyCode == 13) {
                         Chat.sendMessage();
@@ -58,34 +68,33 @@
             };
  
             Chat.socket.onmessage = function (message) {
-                Console.log(window.location.host+" :  "+message.data);
+                Console.log(message.data);
             };
         });
  
         Chat.initialize = function() {
-        	//var roomid = document.getElementById('roomid').value;
         	var roomid = 0;
-        	console.log('ws://' + window.location.host + '/websocket/chat');
+        	console.log('ws://' + window.location.host + '/websocket/'+name);
             if (window.location.protocol == 'http:') {
-                Chat.connect('ws://' + window.location.host + '/websocket/'+ roomid);
+                Chat.connect('ws://' + window.location.host + '/websocket/'+name);
             } else {
-                Chat.connect('wss://' + window.location.host + '/websocket/'+ roomid);
+                Chat.connect('wss://' + window.location.host + '/websocket/'+name);
             }
 
         };
  
         Chat.sendMessage = (function() {
             var message = document.getElementById('chat').value;
-            /*var roomid = document.getElementById('roomid').value;
-            if (message=='' | roomid==''){
-            	alert('please type the roomid or message');
-            }*/
-            if (message != '') {
-                Chat.socket.send(message);
+            var name = document.getElementById('name').value;
+            if (message=='' | name==''){
+            	alert('please enter your name and message');
+            }
+            else{
+                Chat.socket.send(name + ": " +message);
                 document.getElementById('chat').value = '';
             }
-        });
- 
+        })
+        
         var Console = {};
  
         Console.log = (function(message) {
@@ -100,8 +109,8 @@
             console.scrollTop = console.scrollHeight;
         });
  
-        Chat.initialize();
- 
+
+
         document.addEventListener("DOMContentLoaded", function() {
             // Remove elements with "noscript" class - <noscript> is not allowed in XHTML
             var noscripts = document.getElementsByClassName("noscript");
@@ -112,13 +121,19 @@
     </script>
 </head>
 	<body>
-	<div class="noscript"><h2 style="color: #ff0000">Kevin Chatroom</h2></div>
+	<div class="noscript"><h2 style="color: #ff0000">Noscript</h2></div>
 	<div>
 	    <p>
-			<font size="3">Room_id: </font><input type="text" value="0" placeholder="roomid" id="roomid" />
+			<font size="3">Name: </font><input type="text" id="name" />
+		</p>
+		<p>
+			 <button  onclick="Ensure()">Connect</button>
 		</p>
 		<p>
 	        <font size="3">Message: </font><input type="text" placeholder="type and press enter to chat" id="chat" />
+		</p>
+		<p>
+			<button>Send</button>
 	    </p>
 	    <div id="console-container">
 	        <div id="console"></div>
