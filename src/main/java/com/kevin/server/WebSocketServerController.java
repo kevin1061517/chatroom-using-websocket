@@ -75,12 +75,12 @@ public class WebSocketServerController {
                     client.session.getBasicRemote().sendText(msg);
                 }
             } catch (IOException e) {
-            	System.out.println("Chat Error: Failed to send message to client");
+            	logger.warning("Chat Error: Failed to send message to client");
                 connections.remove(client);
                 try {
                     client.session.close();
                 } catch (IOException e1) {
-                    // Ignore
+                    e.printStackTrace();
                 }
                 String message = String.format("Unfortunately! %s has disconnected!", name);
                 broadcast(message);
