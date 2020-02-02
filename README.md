@@ -77,5 +77,6 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
 
 ## Reference
 * https://blog.csdn.net/qq_35017509/article/details/86243089 
-* https://www.callicoder.com/deploy-host-spring-boot-apps-on-heroku/https://blog.csdn.net/u013716535/article/details/86180412 
+* https://www.callicoder.com/deploy-host-spring-boot-apps-on-heroku/
+* https://blog.csdn.net/u013716535/article/details/86180412 
 * https://blog.xuite.net/hs19890622/job/388606028-%E5%9F%B7%E8%A1%8CSpring+Boot+%E5%B0%88%E6%A1%88%E7%9A%84%E6%96%B9%E5%BC%8F 
