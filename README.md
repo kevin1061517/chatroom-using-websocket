@@ -116,3 +116,5 @@ public class WebSocketConfig {
 * https://blog.csdn.net/softwave/article/details/51994253
 * https://blog.csdn.net/qq_33696345/article/details/79989880
 * https://blog.xuite.net/hs19890622/job/388606028-%E5%9F%B7%E8%A1%8CSpring+Boot+%E5%B0%88%E6%A1%88%E7%9A%84%E6%96%B9%E5%BC%8F 
+* https://www.cnblogs.com/wqsbk/p/8661141.html
+* https://elements.heroku.com/buttons/juliuskrah/spring-profiles
