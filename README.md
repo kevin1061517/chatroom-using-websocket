@@ -72,7 +72,7 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
 ## Demo Screenshot(gif)
 ![image](https://i.imgur.com/Mk1AXkP.gif)
 
-## URL
+## Link
 [ChatRoom Demo](https://webforchatroom.herokuapp.com/)
 
 ## Reference
