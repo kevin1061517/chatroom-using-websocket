@@ -4,7 +4,7 @@ I developed a simple web-based chatroom using Spring Boot, which is an open sour
 ## Introduction
 
 ## Synopsis
-### Back-end code
+### WebSocketServerController
 ####   receive front-end websocket
 ``` Java
 @Component
@@ -13,23 +13,29 @@ public class WebSocketServerController {
     ...
     ...
     ...
-@OnOpen
+//最一開始連線就會進到@OnOpen
+    @OnOpen
     public void start(@PathParam(value = "info") String name, Session session) {
     	logger.info("start");
         this.session = session;
-        this.name = name;
-        connections.add(this);
         String message = String.format("%s has joined chatroom now!", name);
+        allUserInfo.put(this, name);
+//        String message = String.format("* %s %s", nickname, "has joined.");
+        broadcast(getAllUsers());
         broadcast(message);
     }
- 
+    
+    //user斷線或關掉web會進入到@OnClose
     @OnClose
     public void end() {
-        connections.remove(this);
-        String message = String.format("Unfortunately! %s has disconnected!", name);
-        broadcast(message);
+    	//順序要對 不然會出現Null Exception
+    	String message = String.format("Unfortunately! %s has disconnected!", allUserInfo.get(this));
+    	allUserInfo.remove(this);
+    	broadcast(message);
+        broadcast(getAllUsers());        
     }
- 
+    
+    //user 在 front-end發送訊息會先到backend在把訊息broadcat到javascript的  Chat.sendMessage
     @OnMessage
     public void incoming(String message) {
     	broadcast(message);
@@ -37,7 +43,16 @@ public class WebSocketServerController {
  
     @OnError
     public void onError(Throwable t) throws Throwable {
-        logger.info("Chat Error: " + t.toString());
+        logger.warning("Chat Error: " + t.toString());
+    }
+    
+    //取得在線使用者名單
+    private String getAllUsers() {
+    	String allusers = "Online users: ";
+        for (Entry<WebSocketServerController,String> e: allUserInfo.entrySet()){
+        	allusers += e.getValue()+",";
+        }
+        return allusers.substring(0, allusers.length()-1);
     }
 ``` 
 ####   broadcast message to all online users
@@ -63,6 +78,18 @@ public class WebSocketServerController {
         }
     }
 ``` 
+### WebSocketConfig
+``` Java
+..
+@Configuration
+@ConditionalOnWebApplication
+public class WebSocketConfig {
+	@Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+}
+``` 
 
 ## Deploying to Heroku
 
@@ -79,7 +106,7 @@ public class WebSocketServerController {
 ![image](https://i.imgur.com/Mk1AXkP.gif)
 
 ## Link
-[ChatRoom Demo](https://webforchatroom.herokuapp.com/)
+[ChatRoom Demo](https://i.imgur.com/4BdjD1V.gif)
 
 ## Reference
 * https://blog.csdn.net/qq_35017509/article/details/86243089 
