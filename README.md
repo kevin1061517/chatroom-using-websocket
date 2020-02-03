@@ -1,5 +1,5 @@
 # ChatRoom_by_Socket
-I developed a simple web-based chatroom using Spring Boot, which is an open source Java-based framework and finally deplyed it to Heroku, which is a cloud platform as a service (PaaS) supporting several programming languages. The purpose of this programming practice is mainly to not only learn the websocket fundamental but also be regarded as homework assigned by my advisor. Most of all, it's important to familiar with JAVA, Spring Boot, Websocket, JavaScript and so on.
+I built a simple chatroom web application using spring boot framework in the JAVA programming language and finally deplyed it to Heroku, which is a cloud platform as a service (PaaS) supporting several programming languages. The purpose of this programming practice is mainly to not only learn the websocket fundamental but also be regarded as homework assigned by my advisor. Most of all, it's important to familiar with JAVA, Spring Boot, Websocket, JavaScript and so on.
 
 ## Introduction
 
