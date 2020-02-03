@@ -37,6 +37,7 @@
         	}
         	else{
         		Chat.initialize();
+        		document.getElementById('box').style.display='';
         	}
         }//end
         
@@ -68,7 +69,14 @@
             };
  
             Chat.socket.onmessage = function (message) {
-                Console.log(message.data);
+            	console.log(message.data);
+            	if(message.data.match('Online users:')!=null){
+            		document.getElementById('box').innerText = message.data;
+            	}
+            	else{
+            		Console.log(message.data);
+            	}
+                
             };
         });
  
@@ -129,6 +137,7 @@
 		<p>
 			 <button  onclick="Ensure()">Connect</button>
 		</p>
+		<div id='box' style='display:none;'></div>
 		<p>
 	        <font size="3">Message: </font><input type="text" placeholder="type and press enter to chat" id="chat" />
 		</p>
