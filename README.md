@@ -4,6 +4,58 @@ I built a simple chatroom web application using spring boot framework in the JAV
 ## Introduction
 
 ## Synopsis
+``` Javascript
+        var Chat = {};
+   	 
+        Chat.socket = null;
+        Chat.connect = (function(host) {
+            if ('WebSocket' in window) {
+                Chat.socket = new WebSocket(host);
+            } else if ('MozWebSocket' in window) {
+                Chat.socket = new MozWebSocket(host);
+            } else {
+                Console.log('Error: WebSocket is not supported by this browser.');
+                return;
+            }
+
+            Chat.socket.onopen = function () {
+                Console.log("Hint: You are joining the chatroom now!")
+                document.getElementById('chat').onkeydown = function(event) {
+                    if (event.keyCode == 13) {
+                        Chat.sendMessage();
+                    }
+                };
+            };
+ 
+            Chat.socket.onclose = function () {
+                document.getElementById('chat').onkeydown = null;
+                Console.log('Info: WebSocket closed');
+            };
+ 
+            Chat.socket.onmessage = function (message) {
+            	console.log(message.data);
+            	if(message.data.match('Online users:')!=null){
+            		document.getElementById('box').innerText = message.data;
+            	}
+            	else{
+            		Console.log(message.data);
+            	}
+                
+            };
+        });
+ 
+        Chat.initialize = function() {
+        	var roomid = 0;
+        	console.log('ws://' + window.location.host + '/websocket/'+name);
+            if (window.location.protocol == 'http:') {
+                Chat.connect('ws://' + window.location.host + '/websocket/'+name);
+            } else {
+                Chat.connect('wss://' + window.location.host + '/websocket/'+name);
+            }
+
+        };
+``` 
+
 ### WebSocketServerController
 ####   receive front-end websocket
 ``` Java
@@ -92,9 +144,10 @@ public class WebSocketConfig {
 ``` 
 
 ## Deploying to Heroku
-
+``` 
+mvn clean package
+``` 
 ## Required language, package and tool
-* Java JDK
 * JAVA Spring Boot
 * javax.websocket package
 * HTML
