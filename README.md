@@ -4,7 +4,11 @@ I built a simple chatroom web application using spring boot framework in the JAV
 ## Introduction
 
 ## Synopsis
+### Front-end
+#### 
 ``` Javascript
+...
+...
         var Chat = {};
    	 
         Chat.socket = null;
@@ -54,10 +58,12 @@ I built a simple chatroom web application using spring boot framework in the JAV
             }
 
         };
+...
+...
 ``` 
 
-### WebSocketServerController
-####   receive front-end websocket
+### Back-end
+#### receive front-end websocket
 ``` Java
 @Component
 @ServerEndpoint(value = "/websocket/{info}")
@@ -72,7 +78,6 @@ public class WebSocketServerController {
         this.session = session;
         String message = String.format("%s has joined chatroom now!", name);
         allUserInfo.put(this, name);
-//        String message = String.format("* %s %s", nickname, "has joined.");
         broadcast(getAllUsers());
         broadcast(message);
     }
@@ -81,7 +86,6 @@ public class WebSocketServerController {
     @OnClose
     public void end() {
     	//順序要對 不然會出現Null Exception
-    	String message = String.format("Unfortunately! %s has disconnected!", allUserInfo.get(this));
     	allUserInfo.remove(this);
     	broadcast(message);
         broadcast(getAllUsers());        
