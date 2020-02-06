@@ -63,7 +63,7 @@ I built a simple chatroom web application using spring boot framework in the JAV
 ``` 
 
 ### Back-end
-#### receive front-end websocket
+#### Receiving from front-end websocket
 ``` Java
 @Component
 @ServerEndpoint(value = "/websocket/{info}")
@@ -111,7 +111,7 @@ public class WebSocketServerController {
         return allusers.substring(0, allusers.length()-1);
     }
 ``` 
-####   broadcast message to all online users
+####   Broadcasting messages to all online users
 ``` Java
     private void broadcast(String msg) {
     	logger.info(connections.toString());
@@ -151,11 +151,10 @@ public class WebSocketConfig {
 ``` 
 mvn clean package
 ``` 
-## Required language, package and tool
-* JAVA Spring Boot
-* javax.websocket package
-* HTML
+## Required language and tool
+* Java (Spring Boot, websocket)
 * JavaScript
+* HTML
 * Heroku
 * Git
 
