@@ -1,6 +1,7 @@
 HELP.md
 target/
 .mvn/
+.idea
 mvnw
 mvnw.cmd
 !.mvn/wrapper/maven-wrapper.jar
