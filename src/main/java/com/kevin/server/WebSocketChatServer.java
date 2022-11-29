@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javax.websocket.OnClose;
@@ -19,16 +18,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ServerEndpoint(value = "/websocket/{info}")
-public class WebSocketServerController {
+public class WebSocketChatServer {
 	private Logger logger = Logger.getLogger("Log");
     private static final String GUEST_PREFIX = "User";
 //    private static final AtomicInteger connectionIds = new AtomicInteger(0);
-    private static Map<WebSocketServerController,String> allUserInfo = new HashMap<>();
+    private static Map<WebSocketChatServer,String> allUserInfo = new HashMap<>();
 //    private final String nickname;
     private Session session;
     
     
-    public WebSocketServerController () {
+    public WebSocketChatServer() {
 //        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
     }
  
@@ -70,16 +69,16 @@ public class WebSocketServerController {
     //取得在線使用者名單
     private String getAllUsers() {
     	String allusers = "Online users: ";
-        for (Entry<WebSocketServerController,String> e: allUserInfo.entrySet()){
+        for (Entry<WebSocketChatServer,String> e: allUserInfo.entrySet()){
         	allusers += e.getValue()+",";
         }
         return allusers.substring(0, allusers.length()-1);
     }
     //傳給所有使用者 但只要出現IOException就跳出迴圈 並結束connection 且要把斷線的使用者 在allUserInfo remove掉
     private void broadcast(String msg) {
-    	WebSocketServerController delet_user = null;
+    	WebSocketChatServer delet_user = null;
     	logger.info(allUserInfo.toString());
-    	for (Entry<WebSocketServerController,String> entry: allUserInfo.entrySet()){
+    	for (Entry<WebSocketChatServer,String> entry: allUserInfo.entrySet()){
 	      try {
 	          synchronized (entry) {
 	        	  entry.getKey().session.getBasicRemote().sendText(msg);
