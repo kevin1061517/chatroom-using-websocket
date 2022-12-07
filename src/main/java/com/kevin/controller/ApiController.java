@@ -26,8 +26,6 @@ public class ApiController {
 
     @RequestMapping("/test")
     public ResponseEntity<?> test() {
-
-
         return ResponseEntity.ok().build();
     }
 }

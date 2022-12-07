@@ -1,75 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
     <title>WebSocket Test</title>
+
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.materialdesignicons.com/1.6.50/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/chatroom.css}" href="../static/css/chatroom.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script th:src="@{/js/chatroom.js}" src="../static/js/chatroom.js"></script>
 </head>
 
 <body>
-<div id="main" style="width: 1200px;height:800px;"></div>
-Welcome<br/><input id="text" type="text" />
-<button onclick="send()">發送消息</button>
-<hr/>
-<button onclick="closeWebSocket()">關閉WebSocket連接</button>
-<hr/>
-<div id="message"></div>
+    <div class="container">
+        <div class="chat_box">
+            <div class="head">
+                <div class="user">
+                    <div class="avatar">
+                        <img src="https://avatars.githubusercontent.com/u/42539369?v=4" width="40" alt="Kevin avatar"/>
+                    </div>
+                    <div class="name">Online Chat Room</div>
+                </div>
+            </div>
+            <div class="body">
+<!--                <div class="incoming">-->
+<!--                    <div class="bubble">-->
+<!--                        <p>Init..</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="outgoing">-->
+<!--                    <div class="bubble lower">-->
+<!--                        <p>Nah, it's cool.</p>-->
+<!--                    </div>-->
+<!--                    <div class="bubble">-->
+<!--                        <p>Well you should get your Dad a cologne. Here smell it. Oh wait! ...</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="typing">-->
+<!--                    <div class="bubble">-->
+<!--                        <div class="ellipsis dot_1"></div>-->
+<!--                        <div class="ellipsis dot_2"></div>-->
+<!--                        <div class="ellipsis dot_3"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div class="foot">
+                <input type="text" class="msg mr-3" placeholder="Type a message..." id="text-input"/>
+                <button id="send-msg-btn" class="circle-btn">
+                    <span class="mdi mdi-send"></span>
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
-<script type="text/javascript">
-    var websocket = null;
-    //判斷當前瀏覽器是否支持WebSocket
-    if('WebSocket' in window) {
-        //改成你的地址
-        websocket = new WebSocket("ws://websocket/TPA");
-    } else {
-        alert('當前瀏覽器 Not support websocket')
-    }
-
-    //連接發生錯誤的回調方法
-    websocket.onerror = function() {
-        setMessageInnerHTML("WebSocket連接發生錯誤");
-    };
-
-    //連接成功建立的回調方法
-    websocket.onopen = function() {
-        setMessageInnerHTML("WebSocket連接成功");
-    }
-    var U01data, Uidata, Usdata
-    //接收到消息的回調方法
-    websocket.onmessage = function(event) {
-        console.log(event);
-        setMessageInnerHTML(event);
-        setechart()
-    }
-
-    //連接關閉的回調方法
-    websocket.onclose = function() {
-        setMessageInnerHTML("WebSocket連接關閉");
-    }
-
-    //監聽窗口關閉事件，當窗口關閉時，主動去關閉websocket連接，防止連接還沒斷開就關閉窗口，server端會拋異常。
-    window.onbeforeunload = function() {
-        closeWebSocket();
-    }
-
-    //將消息顯示在網頁上
-    function setMessageInnerHTML(innerHTML) {
-        document.getElementById('message').innerHTML += innerHTML + '<br/>';
-    }
-
-    //關閉WebSocket連接
-    function closeWebSocket() {
-        websocket.close();
-    }
-
-    //發送消息
-    function send() {
-        var message = document.getElementById('text').value;
-        websocket.send('{"msg":"' + message + '"}');
-        setMessageInnerHTML(message + "
-        ");
-    }
-</script>
-
+</body>
 </html>
