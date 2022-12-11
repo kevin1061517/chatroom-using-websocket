@@ -15,8 +15,8 @@ public class WebSocketConfig {
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-//        container.setMaxSessionIdleTimeout(5000L);
-        container.setAsyncSendTimeout(5000L);
+        container.setMaxSessionIdleTimeout(1800000L);//30min
+//        container.setAsyncSendTimeout(5000L);
 
         return container;
     }

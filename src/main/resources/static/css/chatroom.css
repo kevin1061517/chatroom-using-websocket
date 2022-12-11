@@ -10,6 +10,8 @@ body {
 body {
     font: 16px/1.2 "Roboto", sans-serif;
     color: #333;
+    height: 300px;
+    overflow: scroll;
 }
 .blog {
     font-size: 14px;

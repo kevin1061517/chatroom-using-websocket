@@ -8,45 +8,50 @@ $(document).ready(function () {
             return;
         }
 
-        websocket.onerror = function() {
+        websocket.onerror = () => {
             setMessageToOtherSide("WebSocket connection error");
         };
 
-        websocket.onopen = function() {
+        websocket.onopen = event => {
             setMessageToOtherSide("WebSocket connection successfully");
         };
 
-        websocket.onmessage = function(event) {
+        websocket.onmessage = event => {
             console.log(event.data);
-            setMessageToOtherSide(event.data);
+            setMessageFromAnonymous(event.data);
         };
 
-        websocket.onclose = function() {
+        websocket.onclose = event => {
             setMessageToOtherSide("WebSocket connection close");
         };
     }
     connect();
 
-
-
-    window.onbeforeunload = function() {
-        closeWebSocket();
-    }
-
     function closeWebSocket() {
-        connect();
         websocket.close();
     }
 
     function sendMsg() {
         const message = $('#text-input').val();
-        websocket.send('{"msg":"' + message + '"}');
+        websocket.send(message);
         setMessageToSelfSide(message);
     }
 
     function setMessageToOtherSide(message) {
         $('.body').append(`
+                <div class="text-center mt-3" style="font-size: 12px;color: gray;">
+                    ${message}
+                </div>`);
+    }
+
+    function setMessageFromAnonymous(message) {
+        $('.body').append(`
                 <div class="incoming">
+                    <div>
+                        <span style="font-size: 10px;">
+                            Anonymous
+                        </span>
+                    </div>
                     <div class="bubble">
                         <p>${message}</p>
                     </div>
@@ -63,18 +68,20 @@ $(document).ready(function () {
     }
 
     $('#send-msg-btn').click(function() {
-        console.log('click');
         sendMsg();
     });
 
-    const checkConnection = function () {
-        console.log(websocket.readyState);
-        if(websocket.readyState !== 1) {
-            connect();
-        }
-    };
-    setInterval(checkConnection, 2000);
+    // send ping to server every 3 seconds
+    // const keepAlive = function (timeout = 20000) {
+    //     if (websocket.readyState === websocket.OPEN) {
+    //         websocket.send('ping');
+    //     }
+    //
+    //     setTimeout(keepAlive, timeout);
+    // };
 
-
-
+    $(window).on('beforeunload offline', event => {
+        closeWebSocket();
+    });
 });
+

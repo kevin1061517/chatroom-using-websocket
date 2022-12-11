@@ -4,6 +4,7 @@ import com.kevin.config.WebSocketServerConfigurator;
 import com.kevin.pojo.Client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 @ServerEndpoint(value = "/api/websocket/{teamName}", configurator = WebSocketServerConfigurator.class)
 public class WebSocketDisplayServer {
     private static final Map<String, Client> CURRENT_CLIENTS = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
 
     @OnOpen
     public void onOpen(Session session, @PathParam("teamName") String teamName) {
@@ -32,13 +38,35 @@ public class WebSocketDisplayServer {
 
         Client client = new Client(teamName, "123", session);
         CURRENT_CLIENTS.put(session.getId(), client);
+
+        CURRENT_CLIENTS.values().forEach(eachClient -> {
+            Session eachSession = eachClient.getSession();
+            if(eachSession.isOpen()) {
+                try {
+                    eachSession.getBasicRemote().sendText("Welcome: " + teamName);
+                    executorService.scheduleAtFixedRate(() -> {
+                        try {
+                            String data = "Ping";
+                            ByteBuffer payload = ByteBuffer.wrap(data.getBytes());
+                            eachSession.getBasicRemote().sendPing(payload);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    5, 1500000, TimeUnit.SECONDS);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @OnMessage
-    public void onMessage(Session session, String msg) {
+    public void onMessage(Session session, String message) {
         Client client = CURRENT_CLIENTS.get(session.getId());
+        sendMsgToAll(message, session.getId());
 
-        System.out.println(msg);
+        System.out.println(message);
     }
 
     @OnMessage
@@ -49,9 +77,9 @@ public class WebSocketDisplayServer {
 
     @OnClose
     public void onClose(Session session) {
-        log.info("onClose");
         Client client = CURRENT_CLIENTS.get(session.getId());
-//        CURRENT_CLIENTS.remove(session.getId());
+        log.info("onClose. client name: {}", client.getTeamName());
+        CURRENT_CLIENTS.remove(session.getId());
     }
 
     @OnError
@@ -70,9 +98,16 @@ public class WebSocketDisplayServer {
     }
 
     public synchronized static void sendMsgToAll(String message) {
+        sendMsgToAll(message, null);
+    }
+
+    public synchronized static void sendMsgToAll(String message, String excludeSessionId) {
         CURRENT_CLIENTS.forEach((id, client) -> {
             try {
-                client.getSession().getBasicRemote().sendText(message);
+                if(!StringUtils.equals(id, excludeSessionId)) {
+                    client.getSession().getBasicRemote().sendText(message);
+                }
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -97,14 +132,19 @@ public class WebSocketDisplayServer {
     public synchronized static void sendPingTest() {
         CURRENT_CLIENTS.forEach((id, client) -> {
             try {
-                Session session = client.getSession();
-                if(session.isOpen()) {
-                    session.getBasicRemote().sendText("Ping");
-                    session.getAsyncRemote().sendText("Ping");
-                }
-//                String data = "Ping";
-//                ByteBuffer payload = ByteBuffer.wrap(data.getBytes());
-//                client.getSession().getBasicRemote().sendPing(payload);
+                String data = "Ping";
+                ByteBuffer payload = ByteBuffer.wrap(data.getBytes());
+                client.getSession().getBasicRemote().sendPing(payload);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public synchronized static void closeAllClient() {
+        CURRENT_CLIENTS.forEach((id, client) -> {
+            try {
+                client.getSession().close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

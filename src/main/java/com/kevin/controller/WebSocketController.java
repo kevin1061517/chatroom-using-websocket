@@ -18,4 +18,10 @@ public class WebSocketController {
         WebSocketDisplayServer.sendPingTest();
         return ResponseEntity.ok().build();
     }
+
+    @RequestMapping("/closeTest")
+    public ResponseEntity<?> closeTest() {
+        WebSocketDisplayServer.closeAllClient();
+        return ResponseEntity.ok().build();
+    }
 }
