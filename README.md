@@ -1,5 +1,6 @@
-## ChatRoom_by_Socket
-I built a simple chatroom web application using spring boot framework in the JAVA programming language and finally deplyed it to Heroku, which is a cloud platform as a service (PaaS) supporting several programming languages. The purpose of this programming practice is mainly to not only learn the websocket fundamental but also be regarded as homework assigned by my advisor. Most of all, it's important to familiar with JAVA, Spring Boot, Websocket, JavaScript and so on.
+## Real-Time Chat Room using WebSocket
+Build a real-time chat room application providing a place where you can chat with your friends just like WooTalk.<br>
+In shorts, this is a good project that you can learn websocket overall.
 
 ### How to close a websocket when client's network suddenly turn offline
 1. Using the js offline event handle
@@ -10,8 +11,7 @@ I built a simple chatroom web application using spring boot framework in the JAV
         function closeWebSocket() {
             websocket.close();
         }
-        
-        window.on('beforeunload offline', event => {
+        $(window).on('beforeunload offline', event => {
             closeWebSocket();
         });
     ``` 
@@ -25,6 +25,8 @@ I built a simple chatroom web application using spring boot framework in the JAV
         }
     ```
 2. Using Ping interval on the client-side and decrease the websocket session timeout on server-side
+
+   If websocket server doesn't receive any message in specific time, it will lead to timeout. So we can use this mechanism to decrease the timeout to close session if client doesn't send any ping due to offline.
    #### front-end
     ``` Javascript
         // send ping to server every 3 seconds
@@ -59,3 +61,7 @@ I built a simple chatroom web application using spring boot framework in the JAV
 * https://blog.csdn.net/u013716535/article/details/86180412 
 * https://www.cnblogs.com/wqsbk/p/8661141.html
 * https://elements.heroku.com/buttons/juliuskrah/spring-profiles
+* stackoverflow
+  * https://stackoverflow.com/questions/50117284/how-to-check-is-a-websocket-connection-is-alive
+  * https://stackoverflow.com/questions/59634335/detect-websocket-loss-of-internet-client-side-fast
+  * https://stackoverflow.com/questions/10585355/sending-websocket-ping-pong-frame-from-browser
